@@ -9,7 +9,6 @@ raw_input= input("Enter names from oldest to youngest: ")
 #seperates the names depending on spacing
 raw_names=raw_input.split()
 
-
 #checks if names entered are valid
 try:
     for name in raw_names:
@@ -18,4 +17,5 @@ try:
     my_function(*raw_names)
 except ValueError:
     print("Invalid input. Please enter names using letters only.")
+
 
