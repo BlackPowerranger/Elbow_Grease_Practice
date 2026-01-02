@@ -18,9 +18,11 @@ def showStatus():
     #print an item if there is one
     if "item" in rooms[currentRoom]:
         print('You see a ' + rooms[currentRoom]['item'])
+    if "monster" in rooms[currentRoom]:
+        print("There is a monster here guarding the key! You can 'get closer'.")
     #print the relative position of other rooms
     for direction in rooms[currentRoom]:
-        if direction != 'item':
+        if direction != 'item' and direction != 'monster':
             print('The ' + rooms[currentRoom][direction] + ' is ' + direction)
 
     print("---------------------------")
@@ -33,12 +35,11 @@ rooms = {
     'Hall' : {
         'south' : 'Kitchen',
         'east' : 'Dining Room',
-        'item' : 'key'
-
     },
     'Kitchen' : {
         'north' : 'Hall',
-        'item' : 'monster'
+        'monster' : True,
+        'item' : 'key'
     },
     'Dining Room' : {
         'west' : 'Hall',
@@ -59,8 +60,7 @@ while True:
 
     showStatus()
 
-    if currentRoom == 'Kitchen' and 'item' in rooms['Kitchen'] and rooms['Kitchen']['item'] == 'monster':
-        print('MONSTER GROWLS! You can "get closer"')
+
 
     #get the player's next 'move'
     #.split() breaks it up into a list array
@@ -90,23 +90,29 @@ while True:
         if currentRoom == 'Kitchen' and move[1] == 'closer':
             if 'potion' in inventory:
                 print('The monster sees the potion, becomes timid, and retreats.')
-                del rooms['Kitchen']['item']
+                del rooms['Kitchen']['monster']
             else:
                 print('The monster attacks! You died.')
                 break
         #if the room contains an item, and the item is the one they want to get
         elif "item" in rooms[currentRoom] and move[1] in rooms[currentRoom]['item']:
-            #add the item to their inventory
-            inventory += [move[1]]
-            #display a helpful message
-            print(move[1] + ' got!')
-            #delete the item from the room
-            del rooms[currentRoom]['item']
+            #special check for key in Kitchen
+            if currentRoom == 'Kitchen' and 'monster' in rooms['Kitchen']:
+                print('MONSTER GROWLS! It is guarding a key. You can "get closer" to inspect it.')
+            else:
+                #add the item to their inventory
+                inventory += [move[1]]
+                #display a helpful message
+                print(move[1] + ' got!')
+                #delete the item from the room
+                del rooms[currentRoom]['item']
         #otherwise, if the item isn't there to get
         else:
             #tell them they can't get it
             print('Can\'t get ' + move[1] + '!')
 
-    if currentRoom== 'Garden' and 'key' in inventory and 'potion' in inventory:
+
+
+    if currentRoom== 'Garden' and 'key' in inventory:
         print("You escaped the house... You won!")
         break
